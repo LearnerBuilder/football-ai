@@ -1,1 +1,133 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>AI Football Predictor</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #0f172a;
+      color: white;
+      text-align: center;
+      padding: 20px;
+    }
 
+    h1 {
+      color: #22c55e;
+    }
+
+    input {
+      padding: 10px;
+      margin: 5px;
+      width: 150px;
+      border-radius: 5px;
+      border: none;
+      text-align: center;
+    }
+
+    button {
+      padding: 12px 20px;
+      background: #22c55e;
+      border: none;
+      color: white;
+      font-size: 16px;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background: #16a34a;
+    }
+
+    .result {
+      margin-top: 25px;
+      font-size: 18px;
+      background: #1e293b;
+      padding: 15px;
+      border-radius: 10px;
+    }
+  </style>
+</head>
+<body>
+
+<h1>⚽ AI Football Predictor</h1>
+
+<p>Enter Team Ratings (Example: 1.2 – 2.5)</p>
+
+<h3>Team 1 Attack</h3>
+<input type="number" step="0.1" id="attack1" value="1.5">
+
+<h3>Team 1 Defense</h3>
+<input type="number" step="0.1" id="defense1" value="1.0">
+
+<h3>Team 2 Attack</h3>
+<input type="number" step="0.1" id="attack2" value="1.3">
+
+<h3>Team 2 Defense</h3>
+<input type="number" step="0.1" id="defense2" value="1.2">
+
+<br><br>
+<button onclick="predict()">Predict Match</button>
+
+<div class="result" id="output"></div>
+
+<script>
+function factorial(n) {
+  if (n === 0) return 1;
+  return n * factorial(n - 1);
+}
+
+function poisson(lambda, k) {
+  return (Math.pow(lambda, k) * Math.exp(-lambda)) / factorial(k);
+}
+
+function predict() {
+  let attack1 = parseFloat(document.getElementById("attack1").value);
+  let defense1 = parseFloat(document.getElementById("defense1").value);
+  let attack2 = parseFloat(document.getElementById("attack2").value);
+  let defense2 = parseFloat(document.getElementById("defense2").value);
+
+  let expectedGoals1 = attack1 * defense2;
+  let expectedGoals2 = attack2 * defense1;
+
+  let maxProb = 0;
+  let bestScore = "";
+  let win1Prob = 0;
+  let win2Prob = 0;
+  let drawProb = 0;
+
+  for (let i = 0; i <= 5; i++) {
+    for (let j = 0; j <= 5; j++) {
+      let prob = poisson(expectedGoals1, i) * poisson(expectedGoals2, j);
+
+      if (i > j) win1Prob += prob;
+      else if (j > i) win2Prob += prob;
+      else drawProb += prob;
+
+      if (prob > maxProb) {
+        maxProb = prob;
+        bestScore = i + " - " + j;
+      }
+    }
+  }
+
+  let winner;
+  if (win1Prob > win2Prob && win1Prob > drawProb) winner = "Team 1 Win";
+  else if (win2Prob > win1Prob && win2Prob > drawProb) winner = "Team 2 Win";
+  else winner = "Draw";
+
+  let totalGoals = (expectedGoals1 + expectedGoals2).toFixed(2);
+
+  document.getElementById("output").innerHTML =
+    "<b>Predicted Winner:</b> " + winner +
+    "<br><b>Total Goals Prediction:</b> " + totalGoals +
+    "<br><b>Most Likely Score:</b> " + bestScore +
+    "<br><br><b>Win Probability:</b>" +
+    "<br>Team 1: " + (win1Prob * 100).toFixed(1) + "%" +
+    "<br>Draw: " + (drawProb * 100).toFixed(1) + "%" +
+    "<br>Team 2: " + (win2Prob * 100).toFixed(1) + "%";
+}
+</script>
+
+</body>
+  </html>
