@@ -3,63 +3,22 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>AI Football Predictor</title>
+<title>Football Predictor</title>
 <style>
-  body {
-    font-family: Arial, sans-serif;
-    background: #f7f7f7;
-    display: flex;
-    justify-content: center;
-    padding: 20px;
-  }
-  .container {
-    background: #fff;
-    padding: 20px;
-    border-radius: 10px;
-    box-shadow: 0 0 10px rgba(0,0,0,0.1);
-    width: 100%;
-    max-width: 400px;
-  }
-  h2 {
-    text-align: center;
-    margin-bottom: 20px;
-  }
-  label {
-    display: block;
-    margin-top: 10px;
-  }
-  input[type="number"] {
-    width: 100%;
-    padding: 8px;
-    margin-top: 5px;
-    border-radius: 5px;
-    border: 1px solid #ccc;
-  }
-  button {
-    margin-top: 20px;
-    width: 100%;
-    padding: 10px;
-    background: #007BFF;
-    color: white;
-    border: none;
-    border-radius: 7px;
-    font-size: 16px;
-    cursor: pointer;
-  }
-  button:hover {
-    background: #0056b3;
-  }
-  .result {
-    margin-top: 20px;
-    font-weight: bold;
-    text-align: center;
-    font-size: 18px;
-  }
+  body { font-family: Arial; background: #f0f0f0; display: flex; justify-content: center; padding: 20px; }
+  .container { background: #fff; padding: 20px; border-radius: 10px; width: 100%; max-width: 400px; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
+  h2 { text-align: center; margin-bottom: 20px; }
+  label { display: block; margin-top: 10px; }
+  input { width: 100%; padding: 8px; margin-top: 5px; border-radius: 5px; border: 1px solid #ccc; }
+  button { margin-top: 20px; width: 100%; padding: 10px; background: #007BFF; color: white; border: none; border-radius: 7px; font-size: 16px; cursor: pointer; }
+  button:hover { background: #0056b3; }
+  .result { margin-top: 20px; font-weight: bold; text-align: center; font-size: 18px; }
 </style>
 </head>
 <body>
 <div class="container">
-  <h2>AI Football Predictor</h2>
+  <h2>Football Predictor</h2>
+  
   <label>Home Wins:</label>
   <input type="number" id="homeWins" min="0" value="0">
   <label>Home Draws:</label>
@@ -81,7 +40,6 @@
 
 <script>
 function predictMatch() {
-    // Get values
     const homeWins = parseInt(document.getElementById('homeWins').value);
     const homeDraws = parseInt(document.getElementById('homeDraws').value);
     const homeLosses = parseInt(document.getElementById('homeLosses').value);
@@ -89,25 +47,28 @@ function predictMatch() {
     const awayDraws = parseInt(document.getElementById('awayDraws').value);
     const awayLosses = parseInt(document.getElementById('awayLosses').value);
 
-    // Simple scoring system
-    const homeScore = homeWins*3 + homeDraws; 
-    const awayScore = awayWins*3 + awayDraws;
+    // Simple scoring: total matches considered
+    let homeScore = homeWins*3 + homeDraws; 
+    let awayScore = awayWins*3 + awayDraws;
 
-    let winner = '';
-    let outcome = '';
+    // Scale down to realistic football score (0-5)
+    const maxGoals = 5;
+    const scale = Math.max(homeScore, awayScore) / maxGoals || 1;
+    let homeGoals = Math.round(homeScore / scale);
+    let awayGoals = Math.round(awayScore / scale);
 
-    if(homeScore > awayScore) {
+    // Ensure winner and outcome match
+    if(homeGoals > awayGoals) {
         winner = 'Home Team';
-        outcome = `Predicted Score: Home ${homeScore} - Away ${awayScore}`;
-    } else if(awayScore > homeScore) {
+    } else if(awayGoals > homeGoals) {
         winner = 'Away Team';
-        outcome = `Predicted Score: Home ${homeScore} - Away ${awayScore}`;
     } else {
         winner = 'Draw';
-        outcome = `Predicted Score: Home ${homeScore} - Away ${awayScore}`;
     }
 
-    document.getElementById('result').innerHTML = `<p>Match Winner: ${winner}</p><p>${outcome}</p>`;
+    document.getElementById('result').innerHTML = 
+        `<p>Match Winner: ${winner}</p>` +
+        `<p>Predicted Score: Home ${homeGoals} - Away ${awayGoals}</p>`;
 }
 </script>
 </body>
