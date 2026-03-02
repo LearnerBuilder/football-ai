@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Football Predictor</title>
+<title>⚽ AI Football Predictor</title>
 <style>
   body { font-family: Arial; background: #f0f0f0; display: flex; justify-content: center; padding: 20px; }
   .container { background: #fff; padding: 20px; border-radius: 10px; width: 100%; max-width: 400px; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
@@ -17,7 +17,7 @@
 </head>
 <body>
 <div class="container">
-  <h2>Football Predictor</h2>
+  <h2>⚽ AI Football Predictor</h2>
   
   <label>Home Wins:</label>
   <input type="number" id="homeWins" min="0" value="0">
@@ -40,6 +40,7 @@
 
 <script>
 function predictMatch() {
+    // Get input values
     const homeWins = parseInt(document.getElementById('homeWins').value);
     const homeDraws = parseInt(document.getElementById('homeDraws').value);
     const homeLosses = parseInt(document.getElementById('homeLosses').value);
@@ -47,24 +48,24 @@ function predictMatch() {
     const awayDraws = parseInt(document.getElementById('awayDraws').value);
     const awayLosses = parseInt(document.getElementById('awayLosses').value);
 
-    // Simple scoring: total matches considered
-    let homeScore = homeWins*3 + homeDraws; 
-    let awayScore = awayWins*3 + awayDraws;
+    // Total matches played
+    const homeTotal = homeWins + homeDraws + homeLosses;
+    const awayTotal = awayWins + awayDraws + awayLosses;
 
-    // Scale down to realistic football score (0-5)
+    // Avoid division by zero
+    const homePerformance = homeTotal ? (homeWins*3 + homeDraws)/homeTotal : 0;
+    const awayPerformance = awayTotal ? (awayWins*3 + awayDraws)/awayTotal : 0;
+
+    // Map performance (0-3) to realistic football goals (0-5)
     const maxGoals = 5;
-    const scale = Math.max(homeScore, awayScore) / maxGoals || 1;
-    let homeGoals = Math.round(homeScore / scale);
-    let awayGoals = Math.round(awayScore / scale);
+    let homeGoals = Math.round((homePerformance / 3) * maxGoals);
+    let awayGoals = Math.round((awayPerformance / 3) * maxGoals);
 
-    // Ensure winner and outcome match
-    if(homeGoals > awayGoals) {
-        winner = 'Home Team';
-    } else if(awayGoals > homeGoals) {
-        winner = 'Away Team';
-    } else {
-        winner = 'Draw';
-    }
+    // Ensure winner matches outcome
+    let winner = '';
+    if(homeGoals > awayGoals) winner = 'Home Team';
+    else if(awayGoals > homeGoals) winner = 'Away Team';
+    else winner = 'Draw';
 
     document.getElementById('result').innerHTML = 
         `<p>Match Winner: ${winner}</p>` +
@@ -72,4 +73,4 @@ function predictMatch() {
 }
 </script>
 </body>
-</html>
+</html>        
