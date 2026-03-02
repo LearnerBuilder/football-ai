@@ -1,76 +1,112 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>⚽ AI Football Predictor</title>
-<style>
-  body { font-family: Arial; background: #f0f0f0; display: flex; justify-content: center; padding: 20px; }
-  .container { background: #fff; padding: 20px; border-radius: 10px; width: 100%; max-width: 400px; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
-  h2 { text-align: center; margin-bottom: 20px; }
-  label { display: block; margin-top: 10px; }
-  input { width: 100%; padding: 8px; margin-top: 5px; border-radius: 5px; border: 1px solid #ccc; }
-  button { margin-top: 20px; width: 100%; padding: 10px; background: #007BFF; color: white; border: none; border-radius: 7px; font-size: 16px; cursor: pointer; }
-  button:hover { background: #0056b3; }
-  .result { margin-top: 20px; font-weight: bold; text-align: center; font-size: 18px; }
-</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>⚽ AI Football Predictor</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      padding: 20px;
+    }
+
+    input {
+      padding: 8px;
+      margin: 5px;
+      width: 60px;
+    }
+
+    button {
+      padding: 10px 20px;
+      margin-top: 15px;
+      cursor: pointer;
+    }
+
+    #result {
+      margin-top: 25px;
+      font-size: 1.1em;
+      font-weight: bold;
+      white-space: pre-line;
+    }
+
+    .input-row {
+      margin: 10px 0;
+    }
+  </style>
 </head>
 <body>
-<div class="container">
-  <h2>⚽ AI Football Predictor</h2>
-  
-  <label>Home Wins:</label>
-  <input type="number" id="homeWins" min="0" value="0">
-  <label>Home Draws:</label>
-  <input type="number" id="homeDraws" min="0" value="0">
-  <label>Home Losses:</label>
-  <input type="number" id="homeLosses" min="0" value="0">
-  
-  <label>Away Wins:</label>
-  <input type="number" id="awayWins" min="0" value="0">
-  <label>Away Draws:</label>
-  <input type="number" id="awayDraws" min="0" value="0">
-  <label>Away Losses:</label>
-  <input type="number" id="awayLosses" min="0" value="0">
-  
-  <button onclick="predictMatch()">Predict</button>
-  
-  <div class="result" id="result"></div>
-</div>
+  <h1>⚽ AI Football Predictor</h1>
+  <p>Enter Home & Away team stats to predict outcome and goals</p>
 
-<script>
-function predictMatch() {
-    // Get input values
-    const homeWins = parseInt(document.getElementById('homeWins').value);
-    const homeDraws = parseInt(document.getElementById('homeDraws').value);
-    const homeLosses = parseInt(document.getElementById('homeLosses').value);
-    const awayWins = parseInt(document.getElementById('awayWins').value);
-    const awayDraws = parseInt(document.getElementById('awayDraws').value);
-    const awayLosses = parseInt(document.getElementById('awayLosses').value);
+  <div class="input-row">
+    <strong>Home Team:</strong><br>
+    Wins: <input type="number" id="homeWins" min="0" value="0">
+    Draws: <input type="number" id="homeDraws" min="0" value="0">
+    Losses: <input type="number" id="homeLosses" min="0" value="0">
+  </div>
 
-    // Total matches played
-    const homeTotal = homeWins + homeDraws + homeLosses;
-    const awayTotal = awayWins + awayDraws + awayLosses;
+  <div class="input-row">
+    <strong>Away Team:</strong><br>
+    Wins: <input type="number" id="awayWins" min="0" value="0">
+    Draws: <input type="number" id="awayDraws" min="0" value="0">
+    Losses: <input type="number" id="awayLosses" min="0" value="0">
+  </div>
 
-    // Avoid division by zero
-    const homePerformance = homeTotal ? (homeWins*3 + homeDraws)/homeTotal : 0;
-    const awayPerformance = awayTotal ? (awayWins*3 + awayDraws)/awayTotal : 0;
+  <button onclick="predictMatch()">Predict ⚽</button>
 
-    // Map performance (0-3) to realistic football goals (0-5)
-    const maxGoals = 5;
-    let homeGoals = Math.round((homePerformance / 3) * maxGoals);
-    let awayGoals = Math.round((awayPerformance / 3) * maxGoals);
+  <div id="result"></div>
 
-    // Ensure winner matches outcome
-    let winner = '';
-    if(homeGoals > awayGoals) winner = 'Home Team';
-    else if(awayGoals > homeGoals) winner = 'Away Team';
-    else winner = 'Draw';
+  <script>
+    function predictMatch() {
+      const homeWins = parseInt(document.getElementById('homeWins').value);
+      const homeDraws = parseInt(document.getElementById('homeDraws').value);
+      const homeLosses = parseInt(document.getElementById('homeLosses').value);
 
-    document.getElementById('result').innerHTML = 
-        `<p>Match Winner: ${winner}</p>` +
-        `<p>Predicted Score: Home ${homeGoals} - Away ${awayGoals}</p>`;
-}
-</script>
+      const awayWins = parseInt(document.getElementById('awayWins').value);
+      const awayDraws = parseInt(document.getElementById('awayDraws').value);
+      const awayLosses = parseInt(document.getElementById('awayLosses').value);
+
+      const resultDiv = document.getElementById('result');
+
+      // Validate input
+      if ([homeWins, homeDraws, homeLosses, awayWins, awayDraws, awayLosses].some(isNaN)) {
+        resultDiv.textContent = "Please enter all values!";
+        return;
+      }
+
+      // 1️⃣ Predict outcome
+      const homeTotal = homeWins + homeDraws + homeLosses;
+      const awayTotal = awayWins + awayDraws + awayLosses;
+
+      const homeStrength = (homeWins + 0.5*homeDraws) / homeTotal;
+      const awayStrength = (awayWins + 0.5*awayDraws) / awayTotal;
+
+      let outcome = '';
+      if (homeStrength > awayStrength + 0.1) {
+        outcome = 'Home Win';
+      } else if (awayStrength > homeStrength + 0.1) {
+        outcome = 'Away Win';
+      } else {
+        outcome = 'Draw';
+      }
+
+      // 2️⃣ Predict goals using simple Poisson estimation
+      const homeAvgGoals = (homeWins*2 + homeDraws + awayLosses*1) / (homeTotal + awayTotal);
+      const awayAvgGoals = (awayWins*2 + awayDraws + homeLosses*1) / (homeTotal + awayTotal);
+      const totalGoals = homeAvgGoals + awayAvgGoals;
+
+      // 3️⃣ Over/Under calculations
+      const thresholds = [0.5,1,1.5,2,2.5,3,3.5];
+      let ouText = 'Goals probabilities (approx.):\n';
+      thresholds.forEach(th => {
+        const over = Math.min(1, Math.max(0, totalGoals / (th+0.1)));
+        const under = 1 - over;
+        ouText += `Over ${th}: ${(over*100).toFixed(1)}% | Under ${th}: ${(under*100).toFixed(1)}%\n`;
+      });
+
+      resultDiv.textContent = `Predicted Outcome: ${outcome}\nExpected Total Goals: ${totalGoals.toFixed(2)}\n\n${ouText}`;
+    }
+  </script>
 </body>
-</html>        
+</html>            
