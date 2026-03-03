@@ -1,34 +1,38 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-<meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>⚽ AI Football Predictor</title>
+<title>⚽ AI Football Predictor Pro</title>
 
 <style>
 body{
     font-family: Arial, sans-serif;
-    background: linear-gradient(135deg,#1e3c72,#2a5298);
+    margin:0;
+    background: linear-gradient(135deg,#ff416c,#ff4b2b);
     color:white;
     text-align:center;
-    padding:20px;
 }
 
 .container{
-    background: rgba(255,255,255,0.1);
-    padding:20px;
-    border-radius:15px;
-    max-width:400px;
+    max-width:420px;
     margin:auto;
-    box-shadow:0 0 20px rgba(0,0,0,0.5);
+    padding:20px;
+}
+
+.card{
+    background:rgba(0,0,0,0.3);
+    padding:15px;
+    margin:15px 0;
+    border-radius:15px;
+    box-shadow:0 0 15px rgba(0,0,0,0.5);
 }
 
 h1{
-    color:#00ffcc;
+    color:#00ffe7;
 }
 
 input{
-    width:80%;
+    width:85%;
     padding:8px;
     margin:5px;
     border:none;
@@ -38,24 +42,25 @@ input{
 }
 
 button{
-    padding:10px 20px;
+    padding:12px 25px;
     border:none;
-    border-radius:10px;
-    background:#00ffcc;
+    border-radius:25px;
+    background:#00ffe7;
     font-weight:bold;
+    font-size:16px;
     cursor:pointer;
     margin-top:10px;
 }
 
 button:hover{
-    background:#00ccaa;
+    background:#00c7b5;
 }
 
 .result{
-    margin-top:20px;
-    background:rgba(0,0,0,0.3);
+    background:rgba(0,0,0,0.5);
     padding:15px;
-    border-radius:10px;
+    border-radius:15px;
+    margin-top:20px;
 }
 </style>
 </head>
@@ -63,20 +68,27 @@ button:hover{
 <body>
 
 <div class="container">
-<h1>⚽ AI Football Predictor</h1>
+<h1>⚽ AI Football Predictor Pro</h1>
 
-<h3>Home Team Stats</h3>
-<input type="number" id="homeWins" placeholder="Home Total Wins">
-<input type="number" id="homeDraws" placeholder="Home Total Draws">
-<input type="number" id="homeLosses" placeholder="Home Total Losses">
+<div class="card">
+<h3>🏠 Home Team (Last 5)</h3>
+<input type="number" id="hw" placeholder="Wins (0-5)" min="0" max="5">
+<input type="number" id="hd" placeholder="Draws (0-5)" min="0" max="5">
+<input type="number" id="hl" placeholder="Losses (0-5)" min="0" max="5">
+<input type="number" id="hgs" placeholder="Goals Scored (Last 5)">
+<input type="number" id="hgc" placeholder="Goals Conceded (Last 5)">
+</div>
 
-<h3>Away Team Stats</h3>
-<input type="number" id="awayWins" placeholder="Away Total Wins">
-<input type="number" id="awayDraws" placeholder="Away Total Draws">
-<input type="number" id="awayLosses" placeholder="Away Total Losses">
+<div class="card">
+<h3>🚗 Away Team (Last 5)</h3>
+<input type="number" id="aw" placeholder="Wins (0-5)" min="0" max="5">
+<input type="number" id="ad" placeholder="Draws (0-5)" min="0" max="5">
+<input type="number" id="al" placeholder="Losses (0-5)" min="0" max="5">
+<input type="number" id="ags" placeholder="Goals Scored (Last 5)">
+<input type="number" id="agc" placeholder="Goals Conceded (Last 5)">
+</div>
 
-<br>
-<button onclick="predict()">Predict</button>
+<button onclick="predict()">Predict Match 🔮</button>
 
 <div class="result" id="result"></div>
 </div>
@@ -84,61 +96,78 @@ button:hover{
 <script>
 function predict(){
 
-let hw = parseInt(document.getElementById("homeWins").value) || 0;
-let hd = parseInt(document.getElementById("homeDraws").value) || 0;
-let hl = parseInt(document.getElementById("homeLosses").value) || 0;
+let hw = +hw.value || 0;
+let hd = +hd.value || 0;
+let hl = +hl.value || 0;
+let hgs = +hgs.value || 0;
+let hgc = +hgc.value || 0;
 
-let aw = parseInt(document.getElementById("awayWins").value) || 0;
-let ad = parseInt(document.getElementById("awayDraws").value) || 0;
-let al = parseInt(document.getElementById("awayLosses").value) || 0;
+let aw = +aw.value || 0;
+let ad = +ad.value || 0;
+let al = +al.value || 0;
+let ags = +ags.value || 0;
+let agc = +agc.value || 0;
 
-let homeGames = hw + hd + hl;
-let awayGames = aw + ad + al;
-
-if(homeGames == 0 || awayGames == 0){
-    document.getElementById("result").innerHTML = "⚠️ Please enter valid stats!";
+/* VALIDATION */
+if(hw+hd+hl > 5 || aw+ad+al > 5){
+    result.innerHTML = "⚠️ Wins+Draws+Losses must not exceed 5!";
     return;
 }
 
-/* SMART STRENGTH CALCULATION */
-let homeStrength = (hw*3 + hd*1) / (homeGames*3);
-let awayStrength = (aw*3 + ad*1) / (awayGames*3);
+/* FORM STRENGTH */
+let homeForm = (hw*3 + hd) / 15;
+let awayForm = (aw*3 + ad) / 15;
 
-/* GOAL EXPECTATION */
-let expectedGoals = ((homeStrength + awayStrength) * 3).toFixed(2);
+/* ATTACK & DEFENSE */
+let homeAttack = hgs / 5;
+let homeDefense = hgc / 5;
+let awayAttack = ags / 5;
+let awayDefense = agc / 5;
+
+/* EXPECTED GOALS CALCULATION */
+let homeExpected = (homeAttack * awayDefense + homeForm*2);
+let awayExpected = (awayAttack * homeDefense + awayForm*2);
+
+/* LIMIT BETWEEN 0–5 */
+homeExpected = Math.min(5, Math.max(0, homeExpected));
+awayExpected = Math.min(5, Math.max(0, awayExpected));
+
+let homeGoals = Math.round(homeExpected);
+let awayGoals = Math.round(awayExpected);
+
+let totalGoals = homeGoals + awayGoals;
 
 /* MATCH RESULT */
 let matchResult;
-if(homeStrength > awayStrength + 0.05){
+if(homeGoals > awayGoals){
     matchResult = "🏠 HOME WIN";
-}
-else if(awayStrength > homeStrength + 0.05){
+}else if(awayGoals > homeGoals){
     matchResult = "🚗 AWAY WIN";
-}
-else{
+}else{
     matchResult = "🤝 DRAW";
 }
 
-/* OVER / UNDER */
+/* OVER UNDER FUNCTION */
 function overUnder(line){
-    return expectedGoals > line ? "Over " + line : "Under " + line;
+    return totalGoals > line ? "Over " + line : "Under " + line;
 }
 
-document.getElementById("result").innerHTML = `
-<h3>Prediction Result</h3>
+result.innerHTML = `
+<h3>📊 Prediction Result</h3>
 <b>Match Result:</b> ${matchResult}<br><br>
-<b>Expected Goals:</b> ${expectedGoals}<br><br>
-<b>${overUnder(0.5)}</b><br>
-<b>${overUnder(1)}</b><br>
-<b>${overUnder(1.5)}</b><br>
-<b>${overUnder(2)}</b><br>
-<b>${overUnder(2.5)}</b><br>
-<b>${overUnder(3)}</b><br>
-<b>${overUnder(3.5)}</b>
+<b>Correct Score:</b> ${homeGoals} - ${awayGoals}<br><br>
+<b>Total Goals:</b> ${totalGoals}<br><br>
+${overUnder(0.5)}<br>
+${overUnder(1)}<br>
+${overUnder(1.5)}<br>
+${overUnder(2)}<br>
+${overUnder(2.5)}<br>
+${overUnder(3)}<br>
+${overUnder(3.5)}
 `;
 
 }
 </script>
 
 </body>
-</html> 
+</html>
