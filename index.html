@@ -1,146 +1,144 @@
- <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>AI Football Predictor ⚽</title>
-  <style>
-    /* Dark background */
-    body {
-      background-color: #121212;
-      color: #f0f0f0;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      text-align: center;
-      padding: 20px;
-    }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>⚽ AI Football Predictor</title>
 
-    h1 {
-      color: #ffcc00;
-      text-shadow: 2px 2px #ff0000;
-    }
+<style>
+body{
+    font-family: Arial, sans-serif;
+    background: linear-gradient(135deg,#1e3c72,#2a5298);
+    color:white;
+    text-align:center;
+    padding:20px;
+}
 
-    p {
-      color: #a0a0a0;
-    }
+.container{
+    background: rgba(255,255,255,0.1);
+    padding:20px;
+    border-radius:15px;
+    max-width:400px;
+    margin:auto;
+    box-shadow:0 0 20px rgba(0,0,0,0.5);
+}
 
-    input {
-      padding: 8px;
-      margin: 5px;
-      width: 60px;
-      border-radius: 5px;
-      border: 1px solid #444;
-      background-color: #1e1e1e;
-      color: #fff;
-    }
+h1{
+    color:#00ffcc;
+}
 
-    button {
-      padding: 12px 25px;
-      margin-top: 15px;
-      cursor: pointer;
-      background: linear-gradient(90deg, #ff6f00, #ffcc00);
-      border: none;
-      border-radius: 8px;
-      font-weight: bold;
-      color: #121212;
-      font-size: 16px;
-      transition: transform 0.2s;
-    }
+input{
+    width:80%;
+    padding:8px;
+    margin:5px;
+    border:none;
+    border-radius:8px;
+    text-align:center;
+    font-weight:bold;
+}
 
-    button:hover {
-      transform: scale(1.05);
-    }
+button{
+    padding:10px 20px;
+    border:none;
+    border-radius:10px;
+    background:#00ffcc;
+    font-weight:bold;
+    cursor:pointer;
+    margin-top:10px;
+}
 
-    #result {
-      margin-top: 25px;
-      font-size: 1.1em;
-      font-weight: bold;
-      white-space: pre-line;
-      background-color: #1e1e1e;
-      padding: 15px;
-      border-radius: 10px;
-      border: 1px solid #333;
-      color: #f0f0f0;
-    }
+button:hover{
+    background:#00ccaa;
+}
 
-    .input-row {
-      margin: 10px 0;
-      font-size: 16px;
-    }
-
-    .input-row strong {
-      color: #ff9900;
-    }
-  </style>
+.result{
+    margin-top:20px;
+    background:rgba(0,0,0,0.3);
+    padding:15px;
+    border-radius:10px;
+}
+</style>
 </head>
+
 <body>
-  <h1>⚽ AI Football Predictor</h1>
-  <p>Enter Home & Away team stats to predict outcome and goals</p>
 
-  <div class="input-row">
-    <strong>Home Team:</strong><br>
-    Wins: <input type="number" id="homeWins" min="0" value="0">
-    Draws: <input type="number" id="homeDraws" min="0" value="0">
-    Losses: <input type="number" id="homeLosses" min="0" value="0">
-  </div>
+<div class="container">
+<h1>⚽ AI Football Predictor</h1>
 
-  <div class="input-row">
-    <strong>Away Team:</strong><br>
-    Wins: <input type="number" id="awayWins" min="0" value="0">
-    Draws: <input type="number" id="awayDraws" min="0" value="0">
-    Losses: <input type="number" id="awayLosses" min="0" value="0">
-  </div>
+<h3>Home Team Stats</h3>
+<input type="number" id="homeWins" placeholder="Home Total Wins">
+<input type="number" id="homeDraws" placeholder="Home Total Draws">
+<input type="number" id="homeLosses" placeholder="Home Total Losses">
 
-  <button onclick="predictMatch()">Predict ⚽</button>
+<h3>Away Team Stats</h3>
+<input type="number" id="awayWins" placeholder="Away Total Wins">
+<input type="number" id="awayDraws" placeholder="Away Total Draws">
+<input type="number" id="awayLosses" placeholder="Away Total Losses">
 
-  <div id="result"></div>
+<br>
+<button onclick="predict()">Predict</button>
 
-  <script>
-    function predictMatch() {
-      const homeWins = parseInt(document.getElementById('homeWins').value);
-      const homeDraws = parseInt(document.getElementById('homeDraws').value);
-      const homeLosses = parseInt(document.getElementById('homeLosses').value);
+<div class="result" id="result"></div>
+</div>
 
-      const awayWins = parseInt(document.getElementById('awayWins').value);
-      const awayDraws = parseInt(document.getElementById('awayDraws').value);
-      const awayLosses = parseInt(document.getElementById('awayLosses').value);
+<script>
+function predict(){
 
-      const resultDiv = document.getElementById('result');
+let hw = parseInt(document.getElementById("homeWins").value) || 0;
+let hd = parseInt(document.getElementById("homeDraws").value) || 0;
+let hl = parseInt(document.getElementById("homeLosses").value) || 0;
 
-      if ([homeWins, homeDraws, homeLosses, awayWins, awayDraws, awayLosses].some(isNaN)) {
-        resultDiv.textContent = "Please enter all values!";
-        return;
-      }
+let aw = parseInt(document.getElementById("awayWins").value) || 0;
+let ad = parseInt(document.getElementById("awayDraws").value) || 0;
+let al = parseInt(document.getElementById("awayLosses").value) || 0;
 
-      const homeTotal = homeWins + homeDraws + homeLosses;
-      const awayTotal = awayWins + awayDraws + awayLosses;
+let homeGames = hw + hd + hl;
+let awayGames = aw + ad + al;
 
-      const homeStrength = (homeWins + 0.5*homeDraws) / homeTotal;
-      const awayStrength = (awayWins + 0.5*awayDraws) / awayTotal;
+if(homeGames == 0 || awayGames == 0){
+    document.getElementById("result").innerHTML = "⚠️ Please enter valid stats!";
+    return;
+}
 
-      let outcome = '';
-      if (homeStrength > awayStrength + 0.1) {
-        outcome = '🏠 Home Win';
-      } else if (awayStrength > homeStrength + 0.1) {
-        outcome = '✈️ Away Win';
-      } else {
-        outcome = '🤝 Draw';
-      }
+/* SMART STRENGTH CALCULATION */
+let homeStrength = (hw*3 + hd*1) / (homeGames*3);
+let awayStrength = (aw*3 + ad*1) / (awayGames*3);
 
-      const homeAvgGoals = (homeWins*2 + homeDraws + awayLosses*1) / (homeTotal + awayTotal);
-      const awayAvgGoals = (awayWins*2 + awayDraws + homeLosses*1) / (homeTotal + awayTotal);
-      const totalGoals = homeAvgGoals + awayAvgGoals;
+/* GOAL EXPECTATION */
+let expectedGoals = ((homeStrength + awayStrength) * 3).toFixed(2);
 
-      const thresholds = [0.5,1,1.5,2,2.5,3,3.5];
-      let ouText = '🌟 Goals probabilities (approx.):\n';
-      thresholds.forEach(th => {
-        const over = Math.min(1, Math.max(0, totalGoals / (th+0.1)));
-        const under = 1 - over;
-        ouText += `🔴 Over ${th}: ${(over*100).toFixed(1)}% | 🟢 Under ${th}: ${(under*100).toFixed(1)}%\n`;
-      });
+/* MATCH RESULT */
+let matchResult;
+if(homeStrength > awayStrength + 0.05){
+    matchResult = "🏠 HOME WIN";
+}
+else if(awayStrength > homeStrength + 0.05){
+    matchResult = "🚗 AWAY WIN";
+}
+else{
+    matchResult = "🤝 DRAW";
+}
 
-      resultDiv.innerHTML = `<span style="color:#ffcc00; font-size:1.2em;">Predicted Outcome: ${outcome}</span>\n` +
-                            `<span style="color:#00ccff;">Expected Total Goals: ${totalGoals.toFixed(2)}</span>\n\n${ouText}`;
-    }
-  </script>
+/* OVER / UNDER */
+function overUnder(line){
+    return expectedGoals > line ? "Over " + line : "Under " + line;
+}
+
+document.getElementById("result").innerHTML = `
+<h3>Prediction Result</h3>
+<b>Match Result:</b> ${matchResult}<br><br>
+<b>Expected Goals:</b> ${expectedGoals}<br><br>
+<b>${overUnder(0.5)}</b><br>
+<b>${overUnder(1)}</b><br>
+<b>${overUnder(1.5)}</b><br>
+<b>${overUnder(2)}</b><br>
+<b>${overUnder(2.5)}</b><br>
+<b>${overUnder(3)}</b><br>
+<b>${overUnder(3.5)}</b>
+`;
+
+}
+</script>
+
 </body>
-</html>     
+</html> 
