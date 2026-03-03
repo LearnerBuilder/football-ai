@@ -1,59 +1,67 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+<meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>⚽ AI Football Predictor Pro</title>
+<title>Ultimate AI Football Predictor</title>
 
 <style>
 body{
-    font-family: Arial, sans-serif;
     margin:0;
-    background: linear-gradient(135deg,#ff416c,#ff4b2b);
+    font-family: 'Segoe UI', sans-serif;
+    background: linear-gradient(135deg,#1f1c2c,#928dab);
     color:white;
     text-align:center;
 }
 
 .container{
-    max-width:420px;
+    max-width:450px;
     margin:auto;
     padding:20px;
 }
 
-.card{
-    background:rgba(0,0,0,0.3);
-    padding:15px;
-    margin:15px 0;
-    border-radius:15px;
-    box-shadow:0 0 15px rgba(0,0,0,0.5);
+h1{
+    color:#00ffe0;
+    margin-bottom:10px;
 }
 
-h1{
-    color:#00ffe7;
+.card{
+    background:rgba(0,0,0,0.35);
+    padding:15px;
+    border-radius:15px;
+    margin:15px 0;
+    box-shadow:0 0 15px rgba(0,0,0,0.6);
+}
+
+h3{
+    color:#ffcc00;
 }
 
 input{
     width:85%;
-    padding:8px;
-    margin:5px;
+    padding:10px;
+    margin:6px;
     border:none;
-    border-radius:8px;
+    border-radius:10px;
     text-align:center;
     font-weight:bold;
+    font-size:14px;
 }
 
 button{
-    padding:12px 25px;
+    padding:12px 30px;
     border:none;
-    border-radius:25px;
-    background:#00ffe7;
-    font-weight:bold;
+    border-radius:30px;
+    background:#00ffe0;
     font-size:16px;
+    font-weight:bold;
     cursor:pointer;
     margin-top:10px;
+    transition:0.3s;
 }
 
 button:hover{
-    background:#00c7b5;
+    background:#00bfa6;
 }
 
 .result{
@@ -61,6 +69,7 @@ button:hover{
     padding:15px;
     border-radius:15px;
     margin-top:20px;
+    font-size:15px;
 }
 </style>
 </head>
@@ -68,10 +77,10 @@ button:hover{
 <body>
 
 <div class="container">
-<h1>⚽ AI Football Predictor Pro</h1>
+<h1>⚽ Ultimate AI Predictor</h1>
 
 <div class="card">
-<h3>🏠 Home Team (Last 5)</h3>
+<h3>🏠 Home Team (Last 5 Matches)</h3>
 <input type="number" id="hw" placeholder="Wins (0-5)" min="0" max="5">
 <input type="number" id="hd" placeholder="Draws (0-5)" min="0" max="5">
 <input type="number" id="hl" placeholder="Losses (0-5)" min="0" max="5">
@@ -80,7 +89,7 @@ button:hover{
 </div>
 
 <div class="card">
-<h3>🚗 Away Team (Last 5)</h3>
+<h3>🚗 Away Team (Last 5 Matches)</h3>
 <input type="number" id="aw" placeholder="Wins (0-5)" min="0" max="5">
 <input type="number" id="ad" placeholder="Draws (0-5)" min="0" max="5">
 <input type="number" id="al" placeholder="Losses (0-5)" min="0" max="5">
@@ -88,84 +97,92 @@ button:hover{
 <input type="number" id="agc" placeholder="Goals Conceded (Last 5)">
 </div>
 
-<button onclick="predict()">Predict Match 🔮</button>
+<button onclick="predict()">🔮 Predict Match</button>
 
 <div class="result" id="result"></div>
+
 </div>
 
 <script>
 function predict(){
 
-let hw = +hw.value || 0;
-let hd = +hd.value || 0;
-let hl = +hl.value || 0;
-let hgs = +hgs.value || 0;
-let hgc = +hgc.value || 0;
+// GET VALUES SAFELY
+let hw = parseInt(document.getElementById("hw").value) || 0;
+let hd = parseInt(document.getElementById("hd").value) || 0;
+let hl = parseInt(document.getElementById("hl").value) || 0;
+let hgs = parseInt(document.getElementById("hgs").value) || 0;
+let hgc = parseInt(document.getElementById("hgc").value) || 0;
 
-let aw = +aw.value || 0;
-let ad = +ad.value || 0;
-let al = +al.value || 0;
-let ags = +ags.value || 0;
-let agc = +agc.value || 0;
+let aw = parseInt(document.getElementById("aw").value) || 0;
+let ad = parseInt(document.getElementById("ad").value) || 0;
+let al = parseInt(document.getElementById("al").value) || 0;
+let ags = parseInt(document.getElementById("ags").value) || 0;
+let agc = parseInt(document.getElementById("agc").value) || 0;
 
-/* VALIDATION */
+// VALIDATE LAST 5 TOTAL
 if(hw+hd+hl > 5 || aw+ad+al > 5){
-    result.innerHTML = "⚠️ Wins+Draws+Losses must not exceed 5!";
+    document.getElementById("result").innerHTML =
+    "⚠️ Wins + Draws + Losses cannot exceed 5!";
     return;
 }
 
-/* FORM STRENGTH */
+// FORM CALCULATION (MAX = 1)
 let homeForm = (hw*3 + hd) / 15;
 let awayForm = (aw*3 + ad) / 15;
 
-/* ATTACK & DEFENSE */
+// ATTACK & DEFENSE AVERAGE
 let homeAttack = hgs / 5;
 let homeDefense = hgc / 5;
 let awayAttack = ags / 5;
 let awayDefense = agc / 5;
 
-/* EXPECTED GOALS CALCULATION */
-let homeExpected = (homeAttack * awayDefense + homeForm*2);
-let awayExpected = (awayAttack * homeDefense + awayForm*2);
+// SMART EXPECTED GOALS MODEL
+let homeExpected = (homeAttack * 0.7) + (awayDefense * 0.3) + (homeForm * 1.2);
+let awayExpected = (awayAttack * 0.7) + (homeDefense * 0.3) + (awayForm * 1.0);
 
-/* LIMIT BETWEEN 0–5 */
+// HOME ADVANTAGE BOOST
+homeExpected += 0.3;
+
+// LIMIT 0–5 RANGE
 homeExpected = Math.min(5, Math.max(0, homeExpected));
 awayExpected = Math.min(5, Math.max(0, awayExpected));
 
+// ROUND FOR REALISTIC SCORE
 let homeGoals = Math.round(homeExpected);
 let awayGoals = Math.round(awayExpected);
 
 let totalGoals = homeGoals + awayGoals;
 
-/* MATCH RESULT */
-let matchResult;
+// DETERMINE RESULT
+let resultText;
 if(homeGoals > awayGoals){
-    matchResult = "🏠 HOME WIN";
-}else if(awayGoals > homeGoals){
-    matchResult = "🚗 AWAY WIN";
-}else{
-    matchResult = "🤝 DRAW";
+    resultText = "🏠 HOME WIN";
+}
+else if(awayGoals > homeGoals){
+    resultText = "🚗 AWAY WIN";
+}
+else{
+    resultText = "🤝 DRAW";
 }
 
-/* OVER UNDER FUNCTION */
-function overUnder(line){
+// OVER / UNDER
+function OU(line){
     return totalGoals > line ? "Over " + line : "Under " + line;
 }
 
-result.innerHTML = `
+document.getElementById("result").innerHTML = `
 <h3>📊 Prediction Result</h3>
-<b>Match Result:</b> ${matchResult}<br><br>
+<b>Match Result:</b> ${resultText}<br><br>
 <b>Correct Score:</b> ${homeGoals} - ${awayGoals}<br><br>
 <b>Total Goals:</b> ${totalGoals}<br><br>
-${overUnder(0.5)}<br>
-${overUnder(1)}<br>
-${overUnder(1.5)}<br>
-${overUnder(2)}<br>
-${overUnder(2.5)}<br>
-${overUnder(3)}<br>
-${overUnder(3.5)}
+${OU(0.5)}<br>
+${OU(1)}<br>
+${OU(1.5)}<br>
+${OU(2)}<br>
+${OU(2.5)}<br>
+${OU(3)}<br>
+${OU(3.5)}
 `;
-
 }
 </script>
 
