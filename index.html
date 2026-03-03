@@ -1,119 +1,126 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Football AI Predictor</title>
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
-  <style>
-    * { box-sizing: border-box; margin:0; padding:0; font-family:'Poppins', sans-serif; }
-    body { background: linear-gradient(135deg,#0f172a,#1e293b); color:#fff; min-height:100vh; display:flex; justify-content:center; align-items:center; }
-    .container { background:#1e293b; padding:30px; border-radius:20px; width:90%; max-width:700px; box-shadow:0 10px 30px rgba(0,0,0,0.5); }
-    h1 { text-align:center; margin-bottom:20px; color:#facc15; }
-    label { display:block; margin:10px 0 5px; font-weight:600; color:#fff; }
-    select, input { width:100%; padding:8px 12px; border-radius:8px; border:none; margin-bottom:10px; font-size:16px; }
-    select { background:#0f172a; color:#fbbf24; }
-    input[type=number] { background:#0f172a; color:#fff; }
-    button { width:100%; padding:12px; border:none; border-radius:12px; background:linear-gradient(90deg,#facc15,#f43f5e); color:#1e293b; font-size:18px; font-weight:600; cursor:pointer; display:flex; justify-content:center; align-items:center; gap:10px; transition:0.3s; }
-    button:hover { transform:scale(1.05); }
-    #result { margin-top:20px; text-align:center; font-size:20px; line-height:1.6; }
-    .highlight { color:#f43f5e; font-weight:700; }
-    .analyzing { font-size:18px; color:#fbbf24; animation:pulse 1s infinite; }
-    @keyframes pulse { 0%,100% {opacity:1;} 50% {opacity:0.5;} }
-  </style>
+<meta charset="UTF-8">
+<title>Football AI Predictor</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+<style>
+* { box-sizing: border-box; margin:0; padding:0; font-family:'Poppins', sans-serif; }
+body { background: linear-gradient(135deg,#0f172a,#1e293b); color:#fff; min-height:100vh; display:flex; justify-content:center; align-items:center; }
+.container { background:#1e293b; padding:30px; border-radius:20px; width:95%; max-width:700px; box-shadow:0 10px 30px rgba(0,0,0,0.5); }
+h1 { text-align:center; margin-bottom:20px; color:#facc15; }
+label { display:block; margin:10px 0 5px; font-weight:600; color:#fff; }
+select, input { width:100%; padding:15px 12px; border-radius:12px; border:none; margin-bottom:12px; font-size:18px; }
+select { background:#0f172a; color:#fbbf24; }
+input[type=number] { background:#0f172a; color:#fff; }
+button { width:100%; padding:16px; border:none; border-radius:14px; background:linear-gradient(90deg,#facc15,#f43f5e); color:#1e293b; font-size:20px; font-weight:700; cursor:pointer; display:flex; justify-content:center; align-items:center; gap:12px; transition:0.3s; }
+button:hover { transform:scale(1.05); }
+#result { margin-top:20px; text-align:center; font-size:22px; line-height:1.6; }
+.highlight { color:#f43f5e; font-weight:700; font-size:24px; }
+.analyzing { font-size:20px; color:#fbbf24; animation:pulse 1s infinite; }
+@keyframes pulse { 0%,100% {opacity:1;} 50% {opacity:0.5;} }
+</style>
 </head>
 <body>
-  <div class="container">
-    <h1>⚽ Football AI Predictor ⚽</h1>
+<div class="container">
+<h1>⚽ Football AI Predictor ⚽</h1>
 
-    <label>Home Last 5 Wins</label>
-    <select id="homeWins"></select>
-    <label>Home Last 5 Draws</label>
-    <select id="homeDraws"></select>
-    <label>Home Last 5 Losses</label>
-    <select id="homeLosses"></select>
-    <label>Home Goals Scored (0-20)</label>
-    <input type="number" id="homeGoals" min="0" max="20" value="0">
-    <label>Home Goals Conceded (0-20)</label>
-    <input type="number" id="homeConceded" min="0" max="20" value="0">
+<label>Home Last 5 Wins</label>
+<select id="homeWins"></select>
+<label>Home Last 5 Draws</label>
+<select id="homeDraws"></select>
+<label>Home Last 5 Losses</label>
+<select id="homeLosses"></select>
+<label>Home Goals Scored (0-20)</label>
+<input type="number" id="homeGoals" min="0" max="20" value="0">
+<label>Home Goals Conceded (0-20)</label>
+<input type="number" id="homeConceded" min="0" max="20" value="0">
 
-    <label>Away Last 5 Wins</label>
-    <select id="awayWins"></select>
-    <label>Away Last 5 Draws</label>
-    <select id="awayDraws"></select>
-    <label>Away Last 5 Losses</label>
-    <select id="awayLosses"></select>
-    <label>Away Goals Scored (0-20)</label>
-    <input type="number" id="awayGoals" min="0" max="20" value="0">
-    <label>Away Goals Conceded (0-20)</label>
-    <input type="number" id="awayConceded" min="0" max="20" value="0">
+<label>Away Last 5 Wins</label>
+<select id="awayWins"></select>
+<label>Away Last 5 Draws</label>
+<select id="awayDraws"></select>
+<label>Away Last 5 Losses</label>
+<select id="awayLosses"></select>
+<label>Away Goals Scored (0-20)</label>
+<input type="number" id="awayGoals" min="0" max="20" value="0">
+<label>Away Goals Conceded (0-20)</label>
+<input type="number" id="awayConceded" min="0" max="20" value="0">
 
-    <button id="predictBtn">⚡ Predict Match ⚡</button>
+<button id="predictBtn">⚡ Predict Match ⚡</button>
 
-    <div id="result"></div>
-  </div>
+<div id="result"></div>
+</div>
 
-  <script>
-    // Fill dropdowns 0-5
-    function fillSelect(id){ const s = document.getElementById(id); for(let i=0;i<=5;i++){ let o=document.createElement('option'); o.value=i;o.textContent=i;s.appendChild(o);} }
-    ["homeWins","homeDraws","homeLosses","awayWins","awayDraws","awayLosses"].forEach(fillSelect);
+<script>
+// Fill 0-5 dropdowns
+function fillSelect(id){ const s = document.getElementById(id); for(let i=0;i<=5;i++){ let o=document.createElement('option'); o.value=i;o.textContent=i;s.appendChild(o);} }
+["homeWins","homeDraws","homeLosses","awayWins","awayDraws","awayLosses"].forEach(fillSelect);
 
-    const btn = document.getElementById("predictBtn");
-    const resultDiv = document.getElementById("result");
+const btn = document.getElementById("predictBtn");
+const resultDiv = document.getElementById("result");
 
-    btn.addEventListener("click", () => {
-      // Show analyzing message for 3 sec
-      resultDiv.innerHTML = '<div class="analyzing">Analyzing match...</div>';
-      setTimeout(() => {
-        predictMatch();
-      },3000);
-    });
+btn.addEventListener("click", () => {
+  resultDiv.innerHTML = '<div class="analyzing">Analyzing match...</div>';
+  setTimeout(() => { predictMatch(); },3000);
+});
 
-    function predictMatch(){
-      // Get inputs
-      let hw = parseInt(document.getElementById("homeWins").value);
-      let hd = parseInt(document.getElementById("homeDraws").value);
-      let hl = parseInt(document.getElementById("homeLosses").value);
-      let hgs = parseInt(document.getElementById("homeGoals").value);
-      let hgc = parseInt(document.getElementById("homeConceded").value);
+// Precompute all possible correct scores 0-5
+const possibleScores = [];
+for(let h=0; h<=5; h++){
+  for(let a=0; a<=5; a++){
+    possibleScores.push([h,a]);
+  }
+}
 
-      let aw = parseInt(document.getElementById("awayWins").value);
-      let ad = parseInt(document.getElementById("awayDraws").value);
-      let al = parseInt(document.getElementById("awayLosses").value);
-      let ags = parseInt(document.getElementById("awayGoals").value);
-      let agc = parseInt(document.getElementById("awayConceded").value);
+function predictMatch(){
+  let hw = parseInt(document.getElementById("homeWins").value);
+  let hd = parseInt(document.getElementById("homeDraws").value);
+  let hl = parseInt(document.getElementById("homeLosses").value);
+  let hgs = parseInt(document.getElementById("homeGoals").value);
+  let hgc = parseInt(document.getElementById("homeConceded").value);
 
-      // Strength calculation (compact)
-      let homeStrength = hw*3 + hd*1 + hgs - hgc + 1.2; // home boost
-      let awayStrength = aw*3 + ad*1 + ags - agc;
+  let aw = parseInt(document.getElementById("awayWins").value);
+  let ad = parseInt(document.getElementById("awayDraws").value);
+  let al = parseInt(document.getElementById("awayLosses").value);
+  let ags = parseInt(document.getElementById("awayGoals").value);
+  let agc = parseInt(document.getElementById("awayConceded").value);
 
-      // Predict winner
-      let winner = "";
-      if(Math.round(homeStrength) > Math.round(awayStrength)) winner="Home Wins";
-      else if(Math.round(homeStrength) < Math.round(awayStrength)) winner="Away Wins";
-      else winner="Draw";
+  // Compute strength
+  let homeStrength = hw*3 + hd*1 + hgs - hgc + 1.2; // home boost
+  let awayStrength = aw*3 + ad*1 + ags - agc;
 
-      // Predict exact score 0-5
-      let homeScore = Math.max(0, Math.min(5, Math.round((hw + hgs - hl - hgc)/2 +1)));
-      let awayScore = Math.max(0, Math.min(5, Math.round((aw + ags - al - agc)/2 +1)));
-
-      // Match winner consistency check
-      if(homeScore > awayScore) winner="Home Wins";
-      else if(homeScore < awayScore) winner="Away Wins";
-      else winner="Draw";
-
-      let totalGoals = homeScore + awayScore;
-
-      // Over/Under
-      let overUnder = [0.5,1,1.5,2,2.5].map(x => totalGoals > x ? `Over ${x}` : `Under ${x}`);
-
-      // Display result
-      resultDiv.innerHTML = `
-        <div class="highlight">${winner}</div>
-        Correct Score: ${homeScore} - ${awayScore}<br>
-        Total Goals: ${totalGoals}<br>
-        <strong>Over/Under:</strong> ${overUnder.join(", ")}
-      `;
+  // Pick correct score from 0-5 combos matching winner
+  let bestScore = [0,0];
+  let minDiff = Infinity;
+  possibleScores.forEach(s=>{
+    let h=s[0],a=s[1];
+    let scoreDiff = Math.abs((h - a) - (homeStrength - awayStrength)/3); // try to match strength
+    if(scoreDiff < minDiff){
+      minDiff = scoreDiff;
+      bestScore = [h,a];
     }
-  </script>
+  });
+
+  let homeScore = bestScore[0];
+  let awayScore = bestScore[1];
+
+  // Determine winner
+  let winner="";
+  if(homeScore>awayScore) winner="Home Wins";
+  else if(homeScore<awayScore) winner="Away Wins";
+  else winner="Draw";
+
+  let totalGoals = homeScore + awayScore;
+  let overUnder = [0.5,1,1.5,2,2.5].map(x=>totalGoals>x?`Over ${x}`:`Under ${x}`);
+
+  resultDiv.innerHTML = `
+    <div class="highlight">${winner}</div>
+    Correct Score: ${homeScore} - ${awayScore}<br>
+    Total Goals: ${totalGoals}<br>
+    <strong>Over/Under:</strong> ${overUnder.join(", ")}
+  `;
+}
+</script>
 </body>
 </html>
