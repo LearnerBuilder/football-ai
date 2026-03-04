@@ -7,57 +7,109 @@
   <style>
     /* ====== CSS ====== */
     body {
-      background-color: #e7f5ff;
-      font-family: 'Arial', sans-serif;
+      background-color: #121212;
+      color: white;
+      font-family: 'Roboto', sans-serif;
       margin: 0;
       padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      flex-direction: column;
     }
+
     .container {
-      background-color: #fff;
-      width: 95%;
-      margin: 30px auto;
-      padding: 20px;
-      border-radius: 10px;
-      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-    }
-    h1 {
+      width: 90%;
+      max-width: 700px;
+      padding: 30px;
+      background-color: #333;
+      border-radius: 12px;
+      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
       text-align: center;
-      color: #1b5e20;
-      font-size: 38px;
     }
+
+    h1 {
+      color: #FF4081;
+      font-size: 36px;
+      margin-bottom: 20px;
+    }
+
+    .team-group {
+      margin-bottom: 25px;
+      padding: 15px;
+      background-color: #424242;
+      border-radius: 10px;
+      text-align: left;
+    }
+
     h2 {
-      color: #1565c0;
+      color: #FFEB3B;
+      font-size: 24px;
+      margin-bottom: 10px;
+    }
+
+    label {
+      font-size: 16px;
+      color: #ddd;
+      margin-bottom: 5px;
+      display: block;
+    }
+
+    input[type="number"] {
+      width: 70px;
+      padding: 12px;
+      font-size: 16px;
+      border-radius: 8px;
+      border: 1px solid #ddd;
+      margin: 8px 0;
+      text-align: center;
+      background-color: #222;
+      color: white;
+    }
+
+    input[type="number"]:focus {
+      border: 2px solid #FF4081;
+      outline: none;
+    }
+
+    button {
+      width: 100%;
+      padding: 14px;
+      font-size: 20px;
+      background-color: #FF4081;
+      color: white;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      margin-top: 20px;
+      transition: background-color 0.3s ease;
+    }
+
+    button:hover {
+      background-color: #F50057;
+    }
+
+    #loader {
+      display: none;
+      font-size: 18px;
+      color: #FFEB3B;
       margin-top: 20px;
     }
-    label { display:block; margin-top:10px; }
-    input { padding:8px; font-size:16px; width:60px; margin:5px 0; border-radius:6px; border:1px solid #888; }
-    button {
-      background-color:#1b5e20;
-      color:white;
-      padding:12px;
-      font-size:18px;
-      width:100%;
-      border:none;
-      border-radius:8px;
-      margin-top:15px;
-      cursor:pointer;
-    }
-    button:hover { background-color:#2e7d32; }
-    #loader {
-      display:none;
-      text-align:center;
-      font-size:22px;
-      margin-top:10px;
-      color:#1565c0;
-    }
+
     #result {
-      margin-top:20px;
-      background:#f1f8e9;
-      padding:15px;
-      border-radius:8px;
-      font-size:18px;
+      margin-top: 30px;
+      padding: 20px;
+      background-color: #263238;
+      border-radius: 10px;
+      font-size: 18px;
+      color: #FFEB3B;
+      text-align: left;
     }
-    .team-group { margin-bottom:20px; }
+
+    #result p {
+      margin: 8px 0;
+    }
   </style>
 </head>
 <body>
@@ -130,11 +182,14 @@
         if(winner.includes('Away') && awayScore<=homeScore) awayScore=homeScore+1;
         if(winner.includes('Draw')) homeScore=awayScore;
 
+        // Limit score combinations to 0-3 goals (No "5-4")
+        if(homeScore > 3) homeScore = 3;
+        if(awayScore > 3) awayScore = 3;
+
         // BTTS and over/under
         let btts=(homeScore>0 && awayScore>0)?'Yes':'No';
         let totalGoals=homeScore+awayScore;
         let ou=totalGoals>=3?'Over 2.5 Goals':'Under 2.5 Goals';
-        let confidence=Math.min(95, Math.max(40, Math.round(Math.abs(homeStrength-awayStrength)*4)));
 
         // Show result
         let html=`
@@ -142,7 +197,6 @@
           <strong>📊 Correct Score:</strong> ${homeScore} - ${awayScore}<br>
           <strong>⚽ Both Teams To Score:</strong> ${btts}<br>
           <strong>📈 Total Goals:</strong> ${ou}<br>
-          <strong>🔢 Confidence:</strong> ${confidence}%
         `;
         document.getElementById('result').innerHTML=html;
         document.getElementById('loader').style.display='none';
@@ -150,4 +204,4 @@
     }
   </script>
 </body>
-</html>    
+</html>
