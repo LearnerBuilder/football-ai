@@ -1,176 +1,153 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Football AI Predictor</title>
-<style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>⚽ AI Football Predictor</title>
+  <style>
+    /* ====== CSS ====== */
     body {
-        font-family: 'Segoe UI', sans-serif;
-        background: linear-gradient(120deg, #1f4037, #99f2c8);
-        color: #fff;
-        text-align: center;
-        padding: 15px;
+      background-color: #e7f5ff;
+      font-family: 'Arial', sans-serif;
+      margin: 0;
+      padding: 0;
+    }
+    .container {
+      background-color: #fff;
+      width: 95%;
+      margin: 30px auto;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
     }
     h1 {
-        font-size: 2.5em;
-        color: #ffdd00;
-        text-shadow: 2px 2px #00000080;
-        margin-bottom: 15px;
+      text-align: center;
+      color: #1b5e20;
+      font-size: 38px;
     }
-    .team-input {
-        background: rgba(0,0,0,0.25);
-        padding: 20px;
-        border-radius: 15px;
-        margin: 10px auto;
-        max-width: 400px;
-        box-shadow: 0 0 15px rgba(0,0,0,0.3);
+    h2 {
+      color: #1565c0;
+      margin-top: 20px;
     }
-    h2 { font-size: 1.5em; margin-bottom: 10px; color: #fffa; }
-    label { display: block; margin: 8px 0 3px; font-size: 1em; }
-    select, input[type=number] {
-        padding: 6px;
-        width: 70px;
-        border-radius: 6px;
-        border: none;
-        font-size: 0.95em;
-        text-align: center;
-    }
+    label { display:block; margin-top:10px; }
+    input { padding:8px; font-size:16px; width:60px; margin:5px 0; border-radius:6px; border:1px solid #888; }
     button {
-        padding: 10px 25px;
-        font-size: 1.2em;
-        margin-top: 15px;
-        border: none;
-        border-radius: 8px;
-        cursor: pointer;
-        background: linear-gradient(45deg, #ffdd00, #ff7e00);
-        color: #1e3c72;
-        font-weight: bold;
-        box-shadow: 0 3px 7px rgba(0,0,0,0.3);
-        transition: 0.2s;
+      background-color:#1b5e20;
+      color:white;
+      padding:12px;
+      font-size:18px;
+      width:100%;
+      border:none;
+      border-radius:8px;
+      margin-top:15px;
+      cursor:pointer;
     }
-    button:hover { transform: scale(1.05); }
+    button:hover { background-color:#2e7d32; }
+    #loader {
+      display:none;
+      text-align:center;
+      font-size:22px;
+      margin-top:10px;
+      color:#1565c0;
+    }
     #result {
-        margin-top: 20px;
-        padding: 20px;
-        background: rgba(0,0,0,0.25);
-        border-radius: 15px;
-        max-width: 450px;
-        margin-left:auto;
-        margin-right:auto;
-        box-shadow: 0 0 20px rgba(0,0,0,0.3);
+      margin-top:20px;
+      background:#f1f8e9;
+      padding:15px;
+      border-radius:8px;
+      font-size:18px;
     }
-    .result-row {
-        margin: 8px 0;
-        padding: 10px;
-        border-radius: 10px;
-        font-size: 1.1em;
-        font-weight: bold;
-        color: #fff;
-    }
-    .home-win { background: linear-gradient(90deg,#4caf50,#81c784); }
-    .away-win { background: linear-gradient(90deg,#f44336,#e57373); }
-    .draw { background: linear-gradient(90deg,#ff9800,#ffb74d); }
-    .info-box {
-        background: rgba(255,255,255,0.15);
-        padding: 10px;
-        border-radius: 10px;
-        margin: 5px 0;
-    }
-</style>
+    .team-group { margin-bottom:20px; }
+  </style>
 </head>
 <body>
+  <div class="container">
+    <h1>⚽ AI Football Predictor</h1>
 
-<h1>Football AI Predictor</h1>
+    <!-- HOME INPUTS -->
+    <div class="team-group">
+      <h2>Home Team (Last 5)</h2>
+      <label>Wins:</label><input type="number" id="home-wins" min="0" max="5" required>
+      <label>Draws:</label><input type="number" id="home-draws" min="0" max="5" required>
+      <label>Losses:</label><input type="number" id="home-losses" min="0" max="5" required>
+      <label>Goals Scored:</label><input type="number" id="home-goals" min="0" max="50" required>
+      <label>Goals Conceded:</label><input type="number" id="home-conceded" min="0" max="50" required>
+    </div>
 
-<div class="team-input">
-    <h2>Home Team</h2>
-    <label>Wins (Last 5 matches):
-      <select id="homeWins"><option>0</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option></select>
-    </label>
-    <label>Draws (Last 5 matches):
-      <select id="homeDraws"><option>0</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option></select>
-    </label>
-    <label>Losses (Last 5 matches):
-      <select id="homeLosses"><option>0</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option></select>
-    </label>
-    <label>Goals Scored: <input type="number" id="homeGoals" min="0" value="0"></label>
-    <label>Goals Conceded: <input type="number" id="homeConceded" min="0" value="0"></label>
-</div>
+    <!-- AWAY INPUTS -->
+    <div class="team-group">
+      <h2>Away Team (Last 5)</h2>
+      <label>Wins:</label><input type="number" id="away-wins" min="0" max="5" required>
+      <label>Draws:</label><input type="number" id="away-draws" min="0" max="5" required>
+      <label>Losses:</label><input type="number" id="away-losses" min="0" max="5" required>
+      <label>Goals Scored:</label><input type="number" id="away-goals" min="0" max="50" required>
+      <label>Goals Conceded:</label><input type="number" id="away-conceded" min="0" max="50" required>
+    </div>
 
-<div class="team-input">
-    <h2>Away Team</h2>
-    <label>Wins (Last 5 matches):
-      <select id="awayWins"><option>0</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option></select>
-    </label>
-    <label>Draws (Last 5 matches):
-      <select id="awayDraws"><option>0</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option></select>
-    </label>
-    <label>Losses (Last 5 matches):
-      <select id="awayLosses"><option>0</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option></select>
-    </label>
-    <label>Goals Scored: <input type="number" id="awayGoals" min="0" value="0"></label>
-    <label>Goals Conceded: <input type="number" id="awayConceded" min="0" value="0"></label>
-</div>
+    <button onclick="predictMatch()">⚡ Predict Match</button>
 
-<button onclick="predictMatch()">Predict Match</button>
+    <div id="loader">🔍 Analyzing match...</div>
+    <div id="result"></div>
+  </div>
 
-<div id="result"></div>
+  <script>
+    // ====== JS ======
+    function predictMatch() {
+      document.getElementById('loader').style.display = 'block';
+      document.getElementById('result').innerHTML = '';
+      setTimeout(() => {
+        // Get input values
+        let hW = +document.getElementById('home-wins').value;
+        let hD = +document.getElementById('home-draws').value;
+        let hL = +document.getElementById('home-losses').value;
+        let hGS = +document.getElementById('home-goals').value;
+        let hGC = +document.getElementById('home-conceded').value;
 
-<script>
-function sleep(ms){ return new Promise(resolve=>setTimeout(resolve,ms)); }
+        let aW = +document.getElementById('away-wins').value;
+        let aD = +document.getElementById('away-draws').value;
+        let aL = +document.getElementById('away-losses').value;
+        let aGS = +document.getElementById('away-goals').value;
+        let aGC = +document.getElementById('away-conceded').value;
 
-async function predictMatch(){
-    const resultDiv=document.getElementById('result');
-    resultDiv.innerHTML="<h2>Analyzing match...</h2>";
-    await sleep(3000+Math.random()*2000);
+        // Compute form and strength
+        let homeForm = hW*3 + hD;
+        let awayForm = aW*3 + aD;
+        let homeAgg = hGS - hGC;
+        let awayAgg = aGS - aGC;
+        let homeStrength = homeForm + homeAgg;
+        let awayStrength = awayForm + awayAgg;
 
-    const hW=parseInt(document.getElementById('homeWins').value);
-    const hD=parseInt(document.getElementById('homeDraws').value);
-    const hL=parseInt(document.getElementById('homeLosses').value);
-    const hG=parseInt(document.getElementById('homeGoals').value);
-    const hC=parseInt(document.getElementById('homeConceded').value);
+        // Determine winner
+        let winner;
+        if(homeStrength>awayStrength) winner='🏠 Home Team';
+        else if(awayStrength>homeStrength) winner='✈️ Away Team';
+        else winner='🤝 Draw';
 
-    const aW=parseInt(document.getElementById('awayWins').value);
-    const aD=parseInt(document.getElementById('awayDraws').value);
-    const aL=parseInt(document.getElementById('awayLosses').value);
-    const aG=parseInt(document.getElementById('awayGoals').value);
-    const aC=parseInt(document.getElementById('awayConceded').value);
+        // Predict score (0-3 logic)
+        let homeScore=Math.max(0, Math.round(homeStrength/10 + Math.random()*2));
+        let awayScore=Math.max(0, Math.round(awayStrength/10 + Math.random()*2));
+        if(winner.includes('Home') && homeScore<=awayScore) homeScore=awayScore+1;
+        if(winner.includes('Away') && awayScore<=homeScore) awayScore=homeScore+1;
+        if(winner.includes('Draw')) homeScore=awayScore;
 
-    const homeScoreChance=hW*3+hG-hC;
-    const awayScoreChance=aW*3+aG-aC;
+        // BTTS and over/under
+        let btts=(homeScore>0 && awayScore>0)?'Yes':'No';
+        let totalGoals=homeScore+awayScore;
+        let ou=totalGoals>=3?'Over 2.5 Goals':'Under 2.5 Goals';
+        let confidence=Math.min(95, Math.max(40, Math.round(Math.abs(homeStrength-awayStrength)*4)));
 
-    // determine winner
-    let resultText="", resultClass="";
-    if(homeScoreChance>awayScoreChance){ resultText="Home Win"; resultClass="home-win"; }
-    else if(homeScoreChance<awayScoreChance){ resultText="Away Win"; resultClass="away-win"; }
-    else{ resultText="Draw"; resultClass="draw"; }
-
-    // predict score (simple logic)
-    let homeScore=Math.min(Math.max(Math.round(homeScoreChance/3),0),3);
-    let awayScore=Math.min(Math.max(Math.round(awayScoreChance/3),0),3);
-
-    let probability=(Math.random()*20+70).toFixed(1); // dummy probability 70-90%
-    let bothScore=homeScore>0&&awayScore>0?"Yes":"No";
-
-    let totalGoals=homeScore+awayScore;
-
-    // total goals over/under
-    let over05=totalGoals>0?"Yes":"No";
-    let over15=totalGoals>1?"Yes":"No";
-    let over25=totalGoals>2?"Yes":"No";
-
-    resultDiv.innerHTML=`
-        <div class="result-row ${resultClass}">Match Result: ${resultText}</div>
-        <div class="info-box">Predicted Score: ${homeScore} - ${awayScore} (${probability}%)</div>
-        <div class="info-box">Both Teams to Score: ${bothScore}</div>
-        <div class="info-box">Total Goals: ${totalGoals}</div>
-        <div class="info-box">Over/Under Goals: 
-            O0.5:${over05} | O1.5:${over15} | O2.5:${over25}
-        </div>
-    `;
-}
-</script>
-
+        // Show result
+        let html=`
+          <strong>🏆 Winner:</strong> ${winner}<br>
+          <strong>📊 Correct Score:</strong> ${homeScore} - ${awayScore}<br>
+          <strong>⚽ Both Teams To Score:</strong> ${btts}<br>
+          <strong>📈 Total Goals:</strong> ${ou}<br>
+          <strong>🔢 Confidence:</strong> ${confidence}%
+        `;
+        document.getElementById('result').innerHTML=html;
+        document.getElementById('loader').style.display='none';
+      }, 3000);
+    }
+  </script>
 </body>
-    </html>    
+</html>    
